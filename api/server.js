@@ -26,7 +26,7 @@ app.use('/api', doctorRoutes);
 app.use('/api', appointmentRoutes);
 app.use('/api', billingRoutes);
 app.use('/api', pharmacyRoutes);
-app.use('/api', labRoutes);
+app.use('/api/lab', labRoutes);
 app.use('/api', statsRoutes);
 
 app.get('/', (req, res) => {

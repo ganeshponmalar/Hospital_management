@@ -10,6 +10,9 @@ import PatientsPage from './pages/PatientsPage';
 import DoctorsPage from './pages/DoctorsPage';
 import AppointmentsPage from './pages/AppointmentsPage';
 import BillingPage from './pages/BillingPage';
+import PharmacyPage from './pages/PharmacyPage';
+import LabPage from './pages/Lab/LabPage';
+import LabTests from './pages/Lab/LabTests';
 
 // Placeholder pages for other modules
 const Placeholder = ({ title }) => (
@@ -60,16 +63,17 @@ function App() {
           } />
 
           <Route path="/pharmacy" element={
-            <ProtectedRoute roles={['admin', 'receptionist']}>
-              <Placeholder title="Pharmacy Inventory" />
+            <ProtectedRoute roles={['admin', 'doctor', 'receptionist']}>
+              <PharmacyPage />
             </ProtectedRoute>
           } />
 
           <Route path="/lab" element={
-            <ProtectedRoute>
-              <Placeholder title="Lab Reports" />
+            <ProtectedRoute roles={['admin', 'doctor', 'receptionist', 'technician']}>
+              <LabPage />
             </ProtectedRoute>
           } />
+          <Route path="/lab-tests" element={<LabTests />} />
         </Routes>
       </AuthProvider>
     </Router>

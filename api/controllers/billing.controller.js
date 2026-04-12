@@ -1,6 +1,7 @@
 const pool = require('../db');
 
 exports.createBill = async (req, res) => {
+
     const { patient_id, total_amount, description } = req.body;
     try {
         const [result] = await pool.execute(
@@ -26,6 +27,7 @@ exports.getAllBills = async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 };
+
 
 exports.getBillsByPatient = async (req, res) => {
     try {
