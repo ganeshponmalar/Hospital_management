@@ -9,7 +9,9 @@ import {
     Pill,
     FlaskConical,
     FileText,
-    Settings
+    Settings,
+    BedDouble,
+    ClipboardList
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
@@ -24,6 +26,8 @@ const Sidebar = () => {
         { name: 'Billing', path: '/billing', icon: <CreditCard size={20} />, roles: ['admin', 'doctor', 'receptionist', 'patient'] },
         { name: 'Pharmacy', path: '/pharmacy', icon: <Pill size={20} />, roles: ['admin', 'doctor', 'receptionist'] },
         { name: 'Lab Reports', path: '/lab', icon: <FlaskConical size={20} />, roles: ['admin', 'doctor', 'receptionist', 'patient'] },
+        { name: 'Admissions', path: '/admissions', icon: <ClipboardList size={20} />, roles: ['admin', 'doctor', 'receptionist', 'nurse'] },
+        { name: 'Bed Management', path: '/beds', icon: <BedDouble size={20} />, roles: ['admin', 'doctor', 'receptionist', 'nurse'] },
     ];
 
     const filteredLinks = links.filter(link => link.roles.includes(user?.role));

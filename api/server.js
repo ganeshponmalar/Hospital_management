@@ -19,6 +19,8 @@ const billingRoutes = require('./routes/billing.routes');
 const pharmacyRoutes = require('./routes/pharmacy.routes');
 const labRoutes = require('./routes/lab.routes');
 const statsRoutes = require('./routes/stats.routes');
+const admissionRoutes = require('./routes/admission.routes');
+const wardRoutes = require('./routes/ward.routes');
 
 app.use('/api', authRoutes); // Auth routes still used for login
 app.use('/api', patientRoutes);
@@ -28,6 +30,8 @@ app.use('/api', billingRoutes);
 app.use('/api', pharmacyRoutes);
 app.use('/api/lab', labRoutes);
 app.use('/api', statsRoutes);
+app.use('/api', admissionRoutes);
+app.use('/api', wardRoutes);
 
 app.get('/', (req, res) => {
     res.json({ message: 'Welcome to Hospital Management System API' });

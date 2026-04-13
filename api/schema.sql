@@ -4,24 +4,28 @@ CREATE DATABASE IF NOT EXISTS hospital_db;
 USE hospital_db;
 
 -- Drop existing tables to apply new schema
+DROP TABLE IF EXISTS discharge_summary;
+DROP TABLE IF EXISTS admissions;
+DROP TABLE IF EXISTS beds;
+DROP TABLE IF EXISTS wards;
+DROP TABLE IF EXISTS lab_results;
+DROP TABLE IF EXISTS lab_order_items;
+DROP TABLE IF EXISTS lab_orders;
+DROP TABLE IF EXISTS lab_tests;
+DROP TABLE IF EXISTS lab_reports;
 DROP TABLE IF EXISTS stock_history;
 DROP TABLE IF EXISTS sale_items;
 DROP TABLE IF EXISTS sales;
 DROP TABLE IF EXISTS purchase_items;
 DROP TABLE IF EXISTS purchases;
 DROP TABLE IF EXISTS medicine_batches;
-DROP TABLE IF EXISTS suppliers;
-DROP TABLE IF EXISTS lab_results;
-DROP TABLE IF EXISTS lab_order_items;
-DROP TABLE IF EXISTS lab_orders;
-DROP TABLE IF EXISTS lab_tests;
-DROP TABLE IF EXISTS lab_reports;
 DROP TABLE IF EXISTS billing;
 DROP TABLE IF EXISTS appointments;
+DROP TABLE IF EXISTS medicines;
+DROP TABLE IF EXISTS suppliers;
 DROP TABLE IF EXISTS patients;
 DROP TABLE IF EXISTS doctors;
 DROP TABLE IF EXISTS staff;
-DROP TABLE IF EXISTS medicines;
 DROP TABLE IF EXISTS users;
 
 -- Users Table (Still used for Auth)
@@ -30,7 +34,7 @@ CREATE TABLE IF NOT EXISTS users (
     username VARCHAR(50) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
     email VARCHAR(100),
-    role ENUM('admin', 'doctor', 'receptionist', 'patient') NOT NULL,
+    role ENUM('admin', 'doctor', 'receptionist', 'patient', 'nurse') NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -235,3 +239,66 @@ CREATE TABLE IF NOT EXISTS lab_results (
     report_file VARCHAR(255),
     FOREIGN KEY (order_item_id) REFERENCES lab_order_items(id) ON DELETE CASCADE
 );
+
+-- Wards Table
+CREATE TABLE IF NOT EXISTS wards (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  ward_name VARCHAR(100) NOT NULL,
+  ward_type VARCHAR(50), -- General, ICU, Semi-Private, Private
+  capacity INT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Beds Table
+CREATE TABLE IF NOT EXISTS beds (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  ward_id INT,
+  bed_number VARCHAR(20) NOT NULL,
+  status ENUM('available', 'occupied', 'maintenance') DEFAULT 'available',
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (ward_id) REFERENCES wards(id) ON DELETE CASCADE
+);
+CREATE INDEX idx_ward ON beds(ward_id);
+CREATE INDEX idx_bed_status ON beds(status);
+
+-- Admissions Table
+CREATE TABLE IF NOT EXISTS admissions (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  patient_id INT,
+  doctor_id INT,
+  bed_id INT,
+
+  admission_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+  reason TEXT,
+  admission_type VARCHAR(50), -- Emergency / Planned
+
+  status ENUM('admitted','discharged') DEFAULT 'admitted',
+
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+  FOREIGN KEY (patient_id) REFERENCES patients(id),
+  FOREIGN KEY (doctor_id) REFERENCES doctors(id),
+  FOREIGN KEY (bed_id) REFERENCES beds(id)
+);
+CREATE INDEX idx_admission_patient ON admissions(patient_id);
+CREATE INDEX idx_admission_doctor ON admissions(doctor_id);
+CREATE INDEX idx_admission_bed ON admissions(bed_id);
+
+-- Discharge Summary Table
+CREATE TABLE IF NOT EXISTS discharge_summary (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  admission_id INT,
+
+  discharge_date DATETIME,
+  final_diagnosis TEXT,
+  treatment_given TEXT,
+  medications TEXT,
+  doctor_notes TEXT,
+
+  follow_up_date DATE,
+
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+  FOREIGN KEY (admission_id) REFERENCES admissions(id)
+);
+CREATE INDEX idx_discharge_admission ON discharge_summary(admission_id);
