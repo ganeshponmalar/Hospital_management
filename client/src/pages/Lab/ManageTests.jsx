@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../../utils/api';
 import { Database, PlusCircle } from 'lucide-react';
 
 const ManageTests = () => {
@@ -17,10 +17,7 @@ const ManageTests = () => {
 
     const fetchTests = async () => {
         try {
-            const token = localStorage.getItem('token');
-            const res = await axios.get('http://localhost:5000/api/lab/tests', {
-                headers: { Authorization: "Bearer " + token }
-            });
+            const res = await api.get('/lab/tests');
             setTests(res.data || []);
         } catch (err) {
             console.error("Failed to fetch lab tests", err);
@@ -30,15 +27,12 @@ const ManageTests = () => {
     const handleAddTest = async (e) => {
         e.preventDefault();
         try {
-            const token = localStorage.getItem('token');
-            await axios.post('http://localhost:5000/api/lab/tests', {
+            await api.post('/lab/tests', {
                 test_name: testName,
                 category: category,
                 reference_range: referenceRange,
                 unit: unit,
                 price: parseFloat(price) || 0
-            }, {
-                headers: { Authorization: "Bearer " + token }
             });
 
             alert('Lab test added successfully!');

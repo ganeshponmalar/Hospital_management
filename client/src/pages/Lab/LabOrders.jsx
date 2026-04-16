@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../../utils/api';
 import { FileSearch } from 'lucide-react';
 
 const LabOrders = ({ setActiveTab, setViewingOrderId }) => {
@@ -8,10 +8,7 @@ const LabOrders = ({ setActiveTab, setViewingOrderId }) => {
     useEffect(() => {
         const fetchOrders = async () => {
             try {
-                const token = localStorage.getItem('token');
-                const res = await axios.get('http://localhost:5000/api/lab/orders', {
-                    headers: { Authorization: "Bearer " + token }
-                });
+                const res = await api.get('/lab/orders');
                 setOrders(res.data || []);
             } catch (err) {
                 console.error("Failed to load lab orders", err);
@@ -68,23 +65,23 @@ const LabOrders = ({ setActiveTab, setViewingOrderId }) => {
                                 </td>
                                 <td>
                                     {(o.status === 'Pending' || o.status === 'In Progress') && (
-                                        <button className="btn btn-primary" style={{ padding: '5px 10px', fontSize: '0.85rem' }} 
-                                                onClick={() => { setViewingOrderId(o.id); setActiveTab('LabResults'); }}>
+                                        <button className="btn btn-primary" style={{ padding: '5px 10px', fontSize: '0.85rem' }}
+                                            onClick={() => { setViewingOrderId(o.id); setActiveTab('LabResults'); }}>
                                             Input Metrics
                                         </button>
                                     )}
                                     {(o.status === 'Completed' || o.status === 'Approved') && (
-                                        <button className="btn" style={{ padding: '5px 10px', fontSize: '0.85rem', background: '#e0e7ff', color: '#4f46e5' }} 
-                                                onClick={() => { setViewingOrderId(o.id); setActiveTab('ViewReport'); }}>
-                                            <FileSearch size={16} style={{ verticalAlign: 'middle', marginRight: '5px' }}/> Read Report
+                                        <button className="btn" style={{ padding: '5px 10px', fontSize: '0.85rem', background: '#e0e7ff', color: '#4f46e5' }}
+                                            onClick={() => { setViewingOrderId(o.id); setActiveTab('ViewReport'); }}>
+                                            <FileSearch size={16} style={{ verticalAlign: 'middle', marginRight: '5px' }} /> Read Report
                                         </button>
                                     )}
                                 </td>
                             </tr>
                         ))}
-                </tbody>
-            </table>
-        </div>
+                    </tbody>
+                </table>
+            </div>
         </div >
     );
 };

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../../utils/api';
 import { Plus } from 'lucide-react';
 
 const MedicinesTab = () => {
@@ -12,10 +12,7 @@ const MedicinesTab = () => {
 
     const fetchMedicines = async () => {
         try {
-            const token = localStorage.getItem('token');
-            const res = await axios.get('http://localhost:5000/api/pharmacy/medicines', {
-                headers: { Authorization: `Bearer ${token}` }
-            });
+            const res = await api.get('/pharmacy/medicines');
             setMedicines(res.data);
         } catch (err) {
             console.error(err);
@@ -27,11 +24,7 @@ const MedicinesTab = () => {
     const handleAdd = async (e) => {
         e.preventDefault();
         try {
-            const token = localStorage.getItem('token');
-            await axios.post('http://localhost:5000/api/pharmacy/medicines',
-                { name, category, reorder_level: reorderLevel },
-                { headers: { Authorization: `Bearer ${token}` } }
-            );
+            await api.post('/pharmacy/medicines', { name, category, reorder_level: reorderLevel });
             setName(''); setCategory(''); setReorderLevel(10);
             fetchMedicines();
         } catch (err) {
@@ -42,8 +35,7 @@ const MedicinesTab = () => {
     const viewBatches = async (med) => {
         setViewMedicineInfo(med);
         try {
-            const token = localStorage.getItem('token');
-            const res = await axios.get(`http://localhost:5000/api/pharmacy/medicines/${med.id}/batches`, { headers: { Authorization: `Bearer ${token}` } });
+            const res = await api.get(`/pharmacy/medicines/${med.id}/batches`);
             setBatches(res.data);
         } catch (err) {
             console.error(err);

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../../utils/api';
 import { AlertTriangle, TrendingDown, TrendingUp, Package, AlertCircle } from 'lucide-react';
 
 const StatCard = ({ title, value, icon, color }) => (
@@ -21,13 +21,10 @@ const PharmacyDashboard = () => {
     useEffect(() => {
         const fetchDashboardInfo = async () => {
             try {
-                const token = localStorage.getItem('token');
-                const config = { headers: { Authorization: `Bearer ${token}` } };
-
-                const statsRes = await axios.get('http://localhost:5000/api/pharmacy/dashboard', config);
+                const statsRes = await api.get('/pharmacy/dashboard');
                 setStats(statsRes.data);
 
-                const alertsRes = await axios.get('http://localhost:5000/api/pharmacy/alerts', config);
+                const alertsRes = await api.get('/pharmacy/alerts');
                 setAlerts(alertsRes.data);
             } catch (err) {
                 console.error("Dashboard fetch error", err);

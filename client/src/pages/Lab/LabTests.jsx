@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import api from '../../utils/api';
 
 const LabTests = () => {
     const [tests, setTests] = useState([]);
@@ -16,7 +16,7 @@ const LabTests = () => {
     // FETCH TESTS
     const fetchTests = async () => {
         try {
-            const res = await axios.get('http://localhost:5000/api/lab/tests');
+            const res = await api.get('/lab/tests');
             setTests(res.data);
         } catch (err) {
             console.error(err);
@@ -30,7 +30,7 @@ const LabTests = () => {
     // HANDLE ADD TEST
     const handleAddTest = async () => {
         try {
-            await axios.post('http://localhost:5000/api/lab/tests', formData);
+            await api.post('/lab/tests', formData);
 
             alert("Test added successfully");
 

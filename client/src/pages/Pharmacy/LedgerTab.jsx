@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../../utils/api';
 
 const LedgerTab = () => {
     const [history, setHistory] = useState([]);
@@ -7,10 +7,7 @@ const LedgerTab = () => {
     useEffect(() => {
         const fetchHistory = async () => {
             try {
-                const token = localStorage.getItem('token');
-                const config = {
-                    headers: { Authorization: `Bearer ${token}` } };
-                const res = await axios.get('http://localhost:5000/api/pharmacy/stock-history', config);
+                const res = await api.get('/pharmacy/stock-history');
                 setHistory(res.data);
             } catch (err) {
                 console.error(err);
@@ -23,7 +20,7 @@ const LedgerTab = () => {
         <div className="glass-card" style={{ padding: '20px' }}>
             <h3 style={{ marginBottom: '15px' }}>Inventory Audit Ledger</h3>
             <p style={{ color: 'var(--text-muted)', marginBottom: '15px' }}>Tracks every piece of medicine entering or leaving the physical inventory vault natively from the API logs.</p>
-            
+
             <table className="data-table">
                 <thead>
                     <tr>

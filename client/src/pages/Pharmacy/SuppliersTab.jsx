@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../../utils/api';
 
 const SuppliersTab = () => {
     const [suppliers, setSuppliers] = useState([]);
@@ -10,9 +10,7 @@ const SuppliersTab = () => {
 
     const fetchSuppliers = async () => {
         try {
-            const token = localStorage.getItem('token');
-            const res = await axios.get('http://localhost:5000/api/pharmacy/suppliers', {
-                headers: { Authorization: `Bearer ${token}` }});
+            const res = await api.get('/pharmacy/suppliers');
             setSuppliers(res.data);
         } catch (err) {
             console.error(err);
@@ -24,11 +22,7 @@ const SuppliersTab = () => {
     const handleAdd = async (e) => {
         e.preventDefault();
         try {
-            const token = localStorage.getItem('token');
-            await axios.post('http://localhost:5000/api/pharmacy/suppliers', 
-                { supplier_name: supName, phone, email, address },
-                { headers: { Authorization: `Bearer ${token}` }}
-            );
+            await api.post('/pharmacy/suppliers', { supplier_name: supName, phone, email, address });
             setSupName(''); setPhone(''); setEmail(''); setAddress('');
             fetchSuppliers();
         } catch (err) {

@@ -15,16 +15,12 @@ import LabPage from './pages/Lab/LabPage';
 import LabTests from './pages/Lab/LabTests';
 import AdmissionsPage from './pages/Admissions/AdmissionsPage';
 import BedsPage from './pages/Admissions/BedsPage';
+import EMRPage from './pages/EMR/EMRPage';
+import DoctorSchedulePage from './pages/Schedule/DoctorSchedulePage';
+import QueuePage from './pages/Queue/QueuePage';
 
 // Placeholder pages for other modules
-const Placeholder = ({ title }) => (
-  <DashboardLayout>
-    <div className="glass-card" style={{ padding: '2rem' }}>
-      <h2>{title}</h2>
-      <p style={{ color: 'var(--text-muted)' }}>This module is currently under development.</p>
-    </div>
-  </DashboardLayout>
-);
+// ... existing placeholder code ...
 
 function App() {
   return (
@@ -35,6 +31,12 @@ function App() {
           <Route path="/register" element={<RegisterPage />} />
 
           <Route path="/" element={
+            <ProtectedRoute>
+              <Dashboard />
+            </ProtectedRoute>
+          } />
+
+          <Route path="/dashboard" element={
             <ProtectedRoute>
               <Dashboard />
             </ProtectedRoute>
@@ -86,6 +88,24 @@ function App() {
           <Route path="/beds" element={
             <ProtectedRoute roles={['admin', 'doctor', 'receptionist', 'nurse']}>
               <BedsPage />
+            </ProtectedRoute>
+          } />
+
+          <Route path="/emr" element={
+            <ProtectedRoute roles={['admin', 'doctor']}>
+              <EMRPage />
+            </ProtectedRoute>
+          } />
+
+          <Route path="/schedule" element={
+            <ProtectedRoute roles={['admin']}>
+              <DoctorSchedulePage />
+            </ProtectedRoute>
+          } />
+
+          <Route path="/queue" element={
+            <ProtectedRoute roles={['admin', 'nurse', 'doctor']}>
+              <QueuePage />
             </ProtectedRoute>
           } />
         </Routes>

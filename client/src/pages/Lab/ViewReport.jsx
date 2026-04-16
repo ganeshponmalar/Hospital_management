@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../../utils/api';
 import { FileText, Printer, ArrowLeft, CheckCircle } from 'lucide-react';
 
 const ViewReport = ({ orderId, setActiveTab, setViewingOrderId }) => {
@@ -10,10 +10,7 @@ const ViewReport = ({ orderId, setActiveTab, setViewingOrderId }) => {
     useEffect(() => {
         const fetchOrder = async () => {
             try {
-                const token = localStorage.getItem('token');
-                const res = await axios.get("http://localhost:5000/api/lab/orders/" + orderId, {
-                    headers: { Authorization: "Bearer " + token }
-                });
+                const res = await api.get("/lab/orders/" + orderId);
                 setOrder(res.data);
             } catch (err) {
                 console.error("Failed to load order results", err);
@@ -24,14 +21,9 @@ const ViewReport = ({ orderId, setActiveTab, setViewingOrderId }) => {
 
     const handleVerify = async () => {
         try {
-            const token = localStorage.getItem('token');
-            await axios.put("http://localhost:5000/api/lab/orders/" + orderId + "/verify", {}, {
-                headers: { Authorization: "Bearer " + token }
-            });
+            await api.put("/lab/orders/" + orderId + "/verify", {});
             alert("Report officially verified.");
-            const res = await axios.get("http://localhost:5000/api/lab/orders/" + orderId, {
-                headers: { Authorization: "Bearer " + token }
-            });
+            const res = await api.get("/lab/orders/" + orderId);
             setOrder(res.data);
         } catch (err) {
             console.error(err);

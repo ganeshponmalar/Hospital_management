@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../../utils/api';
 import { Plus, Trash2, CheckCircle2 } from 'lucide-react';
 
 const SalesTab = () => {
@@ -15,16 +15,12 @@ const SalesTab = () => {
 
     const fetchData = async () => {
         try {
-            const token = localStorage.getItem('token');
-            const config = {
-                headers: { Authorization: `Bearer ${token}` } };
-            
             const [patRes, medRes, salesRes] = await Promise.all([
-                axios.get('http://localhost:5000/api/patients', config),
-                axios.get('http://localhost:5000/api/pharmacy/medicines', config),
-                axios.get('http://localhost:5000/api/pharmacy/sales', config)
+                api.get('/patients'),
+                api.get('/pharmacy/medicines'),
+                api.get('/pharmacy/sales')
             ]);
-            
+
             setPatients(patRes.data);
             setMedicines(medRes.data);
             setSales(salesRes.data);
@@ -46,12 +42,11 @@ const SalesTab = () => {
         newItems[index]._batches = [];
         setItems(newItems);
 
-        if(!medicineId) return;
+        if (!medicineId) return;
 
         // Fetch batches for this medicine
         try {
-            const token = localStorage.getItem('token');
-            const res = await axios.get(`http://localhost:5000/api/pharmacy/medicines/${medicineId}/batches`, { headers: { Authorization: `Bearer ${token}` }});
+            const res = await api.get(`/pharmacy/medicines/${medicineId}/batches`);
             newItems[index]._batches = res.data;
             setItems([...newItems]);
         } catch (err) { console.error(err); }
@@ -77,27 +72,26 @@ const SalesTab = () => {
 
     const handleSale = async (e) => {
         e.preventDefault();
-        
+
         // Validation sum
         let isValid = true;
         items.forEach(item => {
             const batch = item._batches.find(b => b.id == item.batch_id);
-            if(batch && item.quantity > batch.quantity) {
+            if (batch && item.quantity > batch.quantity) {
                 alert(`Insufficient stock for batch. Requested ${item.quantity}, have ${batch.quantity}`);
                 isValid = false;
             }
         });
-        if(!isValid) return;
+        if (!isValid) return;
 
         try {
-            const token = localStorage.getItem('token');
             const payload = {
                 patient_id: selectedPatient,
                 discount, tax,
                 items: items.map(i => ({ medicine_id: i.medicine_id, batch_id: i.batch_id, quantity: i.quantity }))
             };
-            await axios.post('http://localhost:5000/api/pharmacy/sales', payload, { headers: { Authorization: `Bearer ${token}` }});
-            
+            await api.post('/pharmacy/sales', payload);
+
             setSelectedPatient('');
             setItems([]); setDiscount(0); setTax(0);
             fetchData();
@@ -128,18 +122,18 @@ const SalesTab = () => {
 
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         <h4 style={{ margin: 0 }}>Cart</h4>
-                        <button type="button" onClick={addItemRow} className="btn" style={{ fontSize: '0.8rem', padding: '4px 8px', background: 'var(--primary-light)', color: 'var(--primary)' }}><Plus size={14}/> Add Medicine</button>
+                        <button type="button" onClick={addItemRow} className="btn" style={{ fontSize: '0.8rem', padding: '4px 8px', background: 'var(--primary-light)', color: 'var(--primary)' }}><Plus size={14} /> Add Medicine</button>
                     </div>
 
                     {items.map((item, idx) => (
                         <div key={idx} style={{ padding: '10px', background: 'var(--surface)', borderRadius: '8px', position: 'relative' }}>
-                            <button type="button" onClick={() => removeItem(idx)} style={{ position: 'absolute', top: 5, right: 5, background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer' }}><Trash2 size={16}/></button>
-                            
+                            <button type="button" onClick={() => removeItem(idx)} style={{ position: 'absolute', top: 5, right: 5, background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer' }}><Trash2 size={16} /></button>
+
                             <select value={item.medicine_id} onChange={e => updateItemMedicine(idx, e.target.value)} required style={{ width: '100%', marginBottom: '5px' }}>
                                 <option value="">Select Medicine</option>
                                 {medicines.map(m => <option key={m.id} value={m.id}>{m.medicine_name} (Stk: {m.stock})</option>)}
                             </select>
-                            
+
                             <div style={{ display: 'flex', gap: '5px' }}>
                                 <select value={item.batch_id} onChange={e => updateItemBatch(idx, e.target.value)} required style={{ flex: 1 }} disabled={!item.medicine_id}>
                                     <option value="">Select Batch</option>
@@ -147,7 +141,7 @@ const SalesTab = () => {
                                         <option key={b.id} value={b.id}>{b.batch_no} (Avail: {b.quantity})</option>
                                     ))}
                                 </select>
-                                <input type="number" placeholder="Qty" value={item.quantity} min="1" onChange={e => updateItemQty(idx, e.target.value)} required style={{ width: '60px' }}/>
+                                <input type="number" placeholder="Qty" value={item.quantity} min="1" onChange={e => updateItemQty(idx, e.target.value)} required style={{ width: '60px' }} />
                             </div>
                             {item.unit_price > 0 && <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginTop: '4px' }}>Subtotal: ${(item.unit_price * item.quantity).toFixed(2)}</div>}
                         </div>
@@ -169,7 +163,7 @@ const SalesTab = () => {
                                 <span style={{ fontWeight: 'bold' }}>Total Bill:</span>
                                 <span style={{ fontSize: '1.2rem', fontWeight: 'bold', color: '#15803d' }}>${calcTotal().toFixed(2)}</span>
                             </div>
-                            <button type="submit" className="btn btn-primary" style={{ display: 'flex', justifyContent: 'center', gap: '8px' }}><CheckCircle2 size={18}/> Complete Sale</button>
+                            <button type="submit" className="btn btn-primary" style={{ display: 'flex', justifyContent: 'center', gap: '8px' }}><CheckCircle2 size={18} /> Complete Sale</button>
                         </>
                     )}
                 </form>

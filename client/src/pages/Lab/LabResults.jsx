@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../../utils/api';
 import { Microscope, ArrowLeft, Save } from 'lucide-react';
 
 const LabResults = ({ orderId, setActiveTab, setViewingOrderId }) => {
@@ -9,10 +9,7 @@ const LabResults = ({ orderId, setActiveTab, setViewingOrderId }) => {
     useEffect(() => {
         const fetchOrder = async () => {
             try {
-                const token = localStorage.getItem('token');
-                const res = await axios.get("http://localhost:5000/api/lab/orders/" + orderId, {
-                    headers: { Authorization: "Bearer " + token }
-                });
+                const res = await api.get("/lab/orders/" + orderId);
                 setOrder(res.data);
             } catch (err) {
                 console.error("Failed to load order details", err);
@@ -33,19 +30,14 @@ const LabResults = ({ orderId, setActiveTab, setViewingOrderId }) => {
 
     const submitResult = async (itemId) => {
         try {
-            const token = localStorage.getItem('token');
             const data = resultsForm[itemId];
             if (!data || !data.result_value) return alert('Result Value is required');
 
-            const res = await axios.post("http://localhost:5000/api/lab/order-items/" + itemId + "/results", data, {
-                headers: { Authorization: "Bearer " + token }
-            });
+            const res = await api.post("/lab/order-items/" + itemId + "/results", data);
             alert("Result logged successfully! Auto-flag logic concluded it was: " + res.data.flag);
 
             // Reload order to reflect the newly inserted metrics
-            const reloadRes = await axios.get("http://localhost:5000/api/lab/orders/" + orderId, {
-                headers: { Authorization: "Bearer " + token }
-            });
+            const reloadRes = await api.get("/lab/orders/" + orderId);
             setOrder(reloadRes.data);
             setResultsForm(prev => {
                 const copy = { ...prev };

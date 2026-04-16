@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../../utils/api';
 import { PlusCircle, Search, Trash2 } from 'lucide-react';
 
 const CreateLabOrder = () => {
@@ -14,10 +14,9 @@ const CreateLabOrder = () => {
     useEffect(() => {
         const fetchInitialData = async () => {
             try {
-                const token = localStorage.getItem('token');
                 const [patRes, testRes] = await Promise.all([
-                    axios.get('http://localhost:5000/api/patients', { headers: { Authorization: "Bearer " + token } }),
-                    axios.get('http://localhost:5000/api/lab/tests', { headers: { Authorization: "Bearer " + token } })
+                    api.get('/patients'),
+                    api.get('/lab/tests')
                 ]);
                 console.log("Patients:", patRes.data);
                 console.log("Tests API Response:", testRes.data);
@@ -62,7 +61,6 @@ const CreateLabOrder = () => {
         if (pendingTests.length === 0) return alert('Add at least one test to order using the dropdown & Add To Cart button');
 
         try {
-            const token = localStorage.getItem('token');
             const user = JSON.parse(localStorage.getItem('user'));
             const isDoctor = user.role === 'doctor';
 
@@ -72,9 +70,7 @@ const CreateLabOrder = () => {
                 test_ids: pendingTests.map(t => t.id)
             };
 
-            await axios.post('http://localhost:5000/api/lab/orders', payload, {
-                headers: { Authorization: "Bearer " + token }
-            });
+            await api.post('/lab/orders', payload);
             alert('Lab Order generated successfully!');
             setPatientId('');
             setSelectedTests([]);

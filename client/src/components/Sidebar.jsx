@@ -26,6 +26,9 @@ const Sidebar = () => {
         { name: 'Billing', path: '/billing', icon: <CreditCard size={20} />, roles: ['admin', 'doctor', 'receptionist', 'patient'] },
         { name: 'Pharmacy', path: '/pharmacy', icon: <Pill size={20} />, roles: ['admin', 'doctor', 'receptionist'] },
         { name: 'Lab Reports', path: '/lab', icon: <FlaskConical size={20} />, roles: ['admin', 'doctor', 'receptionist', 'patient'] },
+        { name: 'EMR History', path: '/emr', icon: <FileText size={20} />, roles: ['admin', 'doctor'] },
+        { name: 'Doctor Schedule', path: '/schedule', icon: <Calendar size={20} />, roles: ['admin'] },
+        { name: 'Queue Status', path: '/queue', icon: <ClipboardList size={20} />, roles: ['admin', 'nurse', 'doctor'] },
         { name: 'Admissions', path: '/admissions', icon: <ClipboardList size={20} />, roles: ['admin', 'doctor', 'receptionist', 'nurse'] },
         { name: 'Bed Management', path: '/beds', icon: <BedDouble size={20} />, roles: ['admin', 'doctor', 'receptionist', 'nurse'] },
     ];
