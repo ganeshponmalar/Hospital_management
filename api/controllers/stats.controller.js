@@ -7,7 +7,7 @@ exports.getDashboardStats = async (req, res) => {
         const [appointments] = await pool.execute(`
             SELECT COUNT(*) AS todayAppointments 
             FROM appointments 
-            WHERE DATE(appointment_date) = CURDATE()
+            WHERE appointment_date >= CURDATE() AND appointment_date < CURDATE() + INTERVAL 1 DAY
         `);
         const [revenue] = await pool.execute(`
             SELECT SUM(total_amount) AS totalRevenue 

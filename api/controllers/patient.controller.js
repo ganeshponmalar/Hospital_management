@@ -79,6 +79,7 @@ exports.updatePatient = async (req, res) => {
     }
 };
 
+
 exports.deletePatient = async (req, res) => {
     try {
         await pool.execute('DELETE FROM patients WHERE id=?', [req.params.id]);

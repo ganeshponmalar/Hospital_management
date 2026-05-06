@@ -19,9 +19,9 @@ const PatientsPage = () => {
         address: '',
         blood_group: '',
         allergies: '',
-        medical_history: '',
+        medical_history: '', 
         emergency_contact_name: '',
-        emergency_contact_phone: ''
+        emergency_contact_phone: '' 
     });
 
     useEffect(() => {

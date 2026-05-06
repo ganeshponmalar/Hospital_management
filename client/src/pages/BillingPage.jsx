@@ -3,6 +3,11 @@ import DashboardLayout from '../layouts/DashboardLayout';
 import api from '../utils/api';
 import { CreditCard, Plus, Search, CheckCircle, Clock } from 'lucide-react';
 
+const getStatusStyle = (status) => {
+    if (status === 'Paid') return { backgroundColor: '#dcfce7', color: '#166534' };
+    return { backgroundColor: '#fee2e2', color: '#991b1b' };
+};
+
 const BillingPage = () => {
     const [bills, setBills] = useState([]);
     const [patients, setPatients] = useState([]);
@@ -14,7 +19,7 @@ const BillingPage = () => {
         description: ''
     });
 
-    const fetchData = async () => {
+    const fetchData = React.useCallback(async () => {
         try {
             const [billsRes, patientsRes] = await Promise.all([
                 api.get('/billing'),
@@ -27,11 +32,11 @@ const BillingPage = () => {
         } finally {
             setLoading(false);
         }
-    };
+    }, []);
 
     useEffect(() => {
         fetchData();
-    }, []);
+    }, [fetchData]);
 
     const handleCreateBill = async (e) => {
         e.preventDefault();
@@ -52,11 +57,6 @@ const BillingPage = () => {
         } catch (err) {
             alert('Failed to update status');
         }
-    };
-
-    const getStatusStyle = (status) => {
-        if (status === 'Paid') return { backgroundColor: '#dcfce7', color: '#166534' };
-        return { backgroundColor: '#fee2e2', color: '#991b1b' };
     };
 
     return (

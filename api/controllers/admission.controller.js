@@ -29,6 +29,7 @@ exports.admitPatient = async (req, res) => {
             'SELECT id FROM patients WHERE id = ?',
             [patient_id]
         );
+        
         if (!patient.length) {
             await connection.rollback();
             return res.status(404).json({ error: 'Patient not found' });

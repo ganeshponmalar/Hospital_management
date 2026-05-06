@@ -38,6 +38,8 @@ CREATE TABLE IF NOT EXISTS users (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+
+
 -- Patients Table (SIMPLIFIED ✅)
 CREATE TABLE IF NOT EXISTS patients (
   id INT AUTO_INCREMENT PRIMARY KEY,
@@ -55,6 +57,8 @@ CREATE TABLE IF NOT EXISTS patients (
   emergency_contact_phone VARCHAR(20),
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+CREATE INDEX idx_patient_name ON patients(name);
+CREATE INDEX idx_patient_phone ON patients(phone);
 
 -- Doctors Table (SIMPLIFIED ✅)
 CREATE TABLE IF NOT EXISTS doctors (
@@ -83,6 +87,7 @@ CREATE TABLE IF NOT EXISTS appointments (
     FOREIGN KEY (patient_id) REFERENCES patients(id) ON DELETE CASCADE,
     FOREIGN KEY (doctor_id) REFERENCES doctors(id) ON DELETE CASCADE
 );
+CREATE INDEX idx_appointment_date_status ON appointments(appointment_date, status);
 
 -- Billing Table
 CREATE TABLE IF NOT EXISTS billing (
@@ -94,6 +99,7 @@ CREATE TABLE IF NOT EXISTS billing (
     description TEXT,
     FOREIGN KEY (patient_id) REFERENCES patients(id) ON DELETE CASCADE
 );
+CREATE INDEX idx_billing_status ON billing(status);
 
 -- Pharmacy Module Tables
 
@@ -217,6 +223,7 @@ CREATE TABLE IF NOT EXISTS lab_orders (
     FOREIGN KEY (verified_by) REFERENCES users(id) ON DELETE SET NULL
 );
 CREATE INDEX idx_patient ON lab_orders(patient_id);
+CREATE INDEX idx_order_status ON lab_orders(status);
 
 CREATE TABLE IF NOT EXISTS lab_order_items (
     id INT AUTO_INCREMENT PRIMARY KEY,

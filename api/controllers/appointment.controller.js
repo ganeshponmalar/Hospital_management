@@ -31,6 +31,7 @@ exports.updateAppointmentStatus = async (req, res) => {
     const { status } = req.body;
     try {
         await pool.execute('UPDATE appointments SET status=? WHERE id=?', [status, req.params.id]);
+        
         res.json({ message: 'Status updated' });
     } catch (err) {
         res.status(500).json({ error: err.message });
